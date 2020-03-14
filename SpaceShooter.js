@@ -1,6 +1,6 @@
 /*
 TODO:
-    
+    add buttons and controls in index.html
     fix collision between asteroids and spaceShip
 */
 const controlKeys = {
@@ -9,21 +9,23 @@ const controlKeys = {
     65 : false // 'A; key = right
 };
 
-// don't play with these controls :p
-const asteroidJumps = 0.8; //0.8 
-const spaceShipJumps = 5;
-const bulletJumps = 5;
-const gameAreaRefresh = 5;
+// controls how fast game objects can go on canvas!
+const asteroidJumps = 1.8;  
+const spaceShipJumps = 10;
+const bulletJumps = 10;
 
-// game controllers
-const asteroidsSpwanSpeed = 50;
-const asteroidGravity = 5; // how fast go down
+// asteroids settings
+const asteroidsSpwanSpeed = 100;
 const minAsteroidSpawn = 1;
 const maxAsteroidSpawn = 5;
 const minAsteroidRaduis = 30;
 const maxAsteroidRaduis = 50;
-const bulletsSpeed = 0.01; // how fast bullet go up
-const BotSpeed = 0.01 // how fast the bot can go left and right
+
+// game intervals
+const gameAreaRefresh = 5;
+const asteroidGravityCallInterval = 5; 
+const bulletsMovementCallInterval = 1; 
+const BotMovementCallInterval = 0.01 
 
 // the space ship :)
 var myHero;
@@ -38,7 +40,7 @@ var myScoreBoard;
 function startGame() {
     GameArea.start();
     myHero = new SpaceShip(30);
-    tools.SpaceShipListener();    
+    tools.keysControlsListener();    
     myScoreBoard = new scoreBoard();
     InitBot();
 }
@@ -52,9 +54,9 @@ var GameArea =  {
         document.body.insertBefore(this.canvas, document.getElementById('Controller'));
         this.frameNo = 0;
         this.interval = setInterval(updateGameArea, gameAreaRefresh); //20
-        this.bulletInterval = setInterval(updateBullets, bulletsSpeed); //20
-        this.BotMovementInterval = setInterval(updateBotMovement, BotSpeed);
-        this.asteroidsMovementInterval = setInterval(updateAsteriodsMovements, asteroidGravity)
+        this.bulletInterval = setInterval(updateBullets, bulletsMovementCallInterval); //20
+        this.BotMovementInterval = setInterval(updateBotMovement, BotMovementCallInterval);
+        this.asteroidsMovementInterval = setInterval(updateAsteriodsMovements, asteroidGravityCallInterval)
     },
     clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -180,11 +182,9 @@ function SpaceShip(lineLength) {
     };
     this.goLeft = function() {
         this.x -= myHero.speed;
-        console.log("left")
     }
     this.goRight = function() {
         this.x += myHero.speed;
-        console.log("right")
     }
 
 }
@@ -350,7 +350,7 @@ var tools = {
         if((GameArea.frameNo / n) % 1 == 0) {return true;}
         return false;
     },
-    SpaceShipListener : function () {
+    keysControlsListener : function () {
         function keydown(e) {
             e = e || event;
             controlKeys[e.keyCode] = true//e.type == 'keydown';
